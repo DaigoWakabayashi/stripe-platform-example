@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "84116343745",
+    "project_id": "stripe-platform-example",
+    "storage_bucket": "stripe-platform-example.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:84116343745:android:b3e3208927ce9f4e3bfd40",
+        "android_client_info": {
+          "package_name": "io.github.daigowakabayashi.stripe_platform_example"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "84116343745-tq4o08hdnl580u96hbqa68vdoivkogda.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBUC9ZbfX_U9kPaleYomF5T-AnnNw6p_wQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "84116343745-tq4o08hdnl580u96hbqa68vdoivkogda.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "84116343745-vcnn8ov43s4sfs68uuuoh2eb40l3evnc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "io.github.daigowakabayashi.stripePlatformExample"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
