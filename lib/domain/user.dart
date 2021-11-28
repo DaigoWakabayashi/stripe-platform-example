@@ -6,6 +6,7 @@ class User {
   String? email;
   String? customerId;
   String? accountId;
+  String? sourceId;
   VerificationStatus? verificationStatus;
 
   User({
@@ -14,6 +15,7 @@ class User {
     this.email,
     this.customerId,
     this.accountId,
+    this.sourceId,
     this.verificationStatus,
   });
 
@@ -23,6 +25,7 @@ class User {
     email = json['email'];
     customerId = json['customerId'];
     accountId = json['accountId'];
+    sourceId = json['sourceId'];
     verificationStatus =
         StatusExtension.parseUserStatus(json['verificationStatus'] as String);
   }

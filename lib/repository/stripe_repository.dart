@@ -29,6 +29,34 @@ class StripeRepository {
     return customerId;
   }
 
+  /// クレジットカードの取得
+  Future retrieveCard(String customerId, String sourceId) async {
+    final callable = FirebaseFunctions.instanceFor(
+      app: Firebase.app(),
+      region: 'asia-northeast1',
+    ).httpsCallable('stripe-retrieveCardInfo');
+    final result = await callable.call({
+      'customerId': customerId,
+      'cardId': sourceId,
+    });
+    return result.data;
+  }
+
+  /// クレジットカードの登録
+  Future<String> registerCard(String customerId, String cardToken) async {
+    final callable = FirebaseFunctions.instanceFor(
+      app: Firebase.app(),
+      region: 'asia-northeast1',
+    ).httpsCallable('stripe-createCardInfo');
+    final result = await callable.call({
+      'customerId': customerId,
+      'cardToken': cardToken,
+    });
+    final data = result.data;
+    final sourceId = data['id'];
+    return sourceId;
+  }
+
   ///
   /// ConnectAccount（お金を受け取るアカウント ≒ 出品者）
   ///

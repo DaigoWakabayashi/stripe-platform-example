@@ -10,7 +10,7 @@ class UserRepository {
     return _instance;
   }
 
-  User _user = User();
+  User? _user;
   final _firestore = FirebaseFirestore.instance;
 
   /// user を新規作成する
@@ -30,7 +30,7 @@ class UserRepository {
   }
 
   /// 単一取得
-  Future<User> fetch() async {
+  Future<User?> fetch() async {
     final id = auth.FirebaseAuth.instance.currentUser?.uid;
     final doc = await _firestore.collection('users').doc(id).get();
     final data = doc.data();
@@ -38,5 +38,18 @@ class UserRepository {
       _user = User.fromJson(data);
     }
     return _user;
+  }
+
+  /// ローカルキャッシュを削除
+  void deleteLocalCache() {
+    _user = null;
+  }
+
+  /// カード情報（IDのみ）を保存する
+  Future updatePaymentMethod({required String sourceId}) async {
+    final user = await fetch();
+    return _firestore.collection('users').doc(user?.id).update({
+      'sourceId': sourceId,
+    });
   }
 }
