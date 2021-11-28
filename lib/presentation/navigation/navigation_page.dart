@@ -15,7 +15,7 @@ class NavigationPage extends StatelessWidget {
         builder: (context, model, child) {
           final List<String> _tabNames = [
             "商品一覧",
-            "マイページ",
+            "アカウント",
           ];
           return Scaffold(
             body: _topPageBody(context),

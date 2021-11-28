@@ -13,11 +13,11 @@ class AccountPage extends StatelessWidget {
       child: Consumer<AccountModel>(builder: (context, model, child) {
         return Scaffold(
           appBar: AppBar(
-            title: const Text('マイページ'),
+            title: const Text('アカウント'),
           ),
           body: Column(
-            children: const [
-              Text('マイページ'),
+            children: [
+              Text('アカウント'),
             ],
           ),
         );
