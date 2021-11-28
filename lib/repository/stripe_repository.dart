@@ -10,7 +10,7 @@ class StripeRepository {
   }
 
   ///
-  /// Customer（お金を払うアカウント）
+  /// Customer（お金を払うアカウント ≒ 購入者）
   ///
   /// https://stripe.com/docs/api/customers/object
 
@@ -22,7 +22,7 @@ class StripeRepository {
     ).httpsCallable('stripe-createCustomer');
     final functionResult = await callable.call({
       'email': email,
-      'idempotencyKey': Uuid().v4(),
+      'idempotencyKey': const Uuid().v4(),
     });
     final data = functionResult.data;
     final String customerId = data['customerId'];
@@ -42,7 +42,7 @@ class StripeRepository {
     ).httpsCallable('stripe-createConnectAccount');
     final functionResult = await callable.call({
       'email': email,
-      'idempotencyKey': Uuid().v4(),
+      'idempotencyKey': const Uuid().v4(),
     });
     final data = functionResult.data;
     final String accountId = data['id'];
