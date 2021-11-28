@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:stripe_platform_example/domain/user.dart';
+import 'package:stripe_platform_example/utils/verification_status.dart';
 
 class UserRepository {
   static final UserRepository _instance = UserRepository._internal();
@@ -13,12 +14,18 @@ class UserRepository {
   final _firestore = FirebaseFirestore.instance;
 
   /// user を新規作成する
-  Future<void> createUser(auth.User? user, String customerId) async {
+  Future<void> createUser(
+    auth.User? user,
+    String customerId,
+    String accountId,
+  ) async {
     await _firestore.collection('users').doc(user?.uid).set({
       'id': user?.uid,
       'displayName': user?.displayName,
       'email': user?.email,
       'customerId': customerId,
+      'accountId': accountId,
+      'verificationStatus': VerificationStatus.unverified.toEnumString,
     });
   }
 

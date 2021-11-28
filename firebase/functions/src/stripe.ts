@@ -82,16 +82,12 @@ export const createStripeCharge = functions.region("asia-northeast1").https.onCa
 
 
 // MARK: - ConnectAccountを作成し、accountIdを返す
-export const createConnectAccount = functions.region("asia-northeast1").https.onCall((data, context) => {
-    return stripe.accounts.create({
+export const createConnectAccount = functions.region("asia-northeast1").https.onCall(async (data, context) => {
+    return await stripe.accounts.create({
         type: 'custom',
         country: 'JP',
+        email: data.email,
         business_type: 'individual',
-        business_profile: {
-                mcc: '8398', // 業種コード（8398 → 慈善・社会福祉団体）
-                url: data.url, // 事業のウェブサイト
-                product_description: data.outline, // 事業の内容
-            },
         capabilities: {
             card_payments: { requested: true },
             transfers: { requested: true },

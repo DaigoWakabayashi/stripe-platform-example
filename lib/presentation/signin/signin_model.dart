@@ -18,14 +18,22 @@ class SignInModel extends ChangeNotifier {
     final doc =
         await FirebaseFirestore.instance.collection('users').doc(userId).get();
 
-    // user ドキュメントがない場合は作成する
+    // user ドキュメントがない場合は作成
     if (!doc.exists) {
-      /// Stripe の customer（お金を受け取るアカウント）を作成
+      /// Stripe の customer（お金を払う側のアカウント）を作成
       final customerId =
           await stripeRepo.createCustomer(credential.user?.email ?? '');
 
+      /// Stripe の connectAccount (お金を受け取る側のアカウント）を作成
+      final accountId =
+          await stripeRepo.createConnectAccount(credential.user?.email ?? '');
+
       // user ドキュメントを作成
-      await userRepo.createUser(credential.user, customerId);
+      await userRepo.createUser(
+        credential.user,
+        customerId,
+        accountId,
+      );
     }
   }
 
