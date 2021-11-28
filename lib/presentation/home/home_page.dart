@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:stripe_platform_example/account/account_page.dart';
+import 'package:stripe_platform_example/presentation/account/account_page.dart';
 import 'package:stripe_platform_example/presentation/product_list/product_list_page.dart';
 
 import 'home_model.dart';
