@@ -13,4 +13,4 @@ key.properties
 **/*.jks
 
 # Firebase
-app/src/**/google-services.json
+app/google-services.json
