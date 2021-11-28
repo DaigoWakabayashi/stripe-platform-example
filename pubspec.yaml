@@ -23,6 +23,8 @@ dependencies:
   logger: ^1.1.0
   google_sign_in: ^5.2.1
   flutter_signin_button: ^2.0.0
+  uuid: ^3.0.5
+
 
 
 dev_dependencies:

@@ -12,14 +12,17 @@ class UserRepository {
   User _user = User();
   final _firestore = FirebaseFirestore.instance;
 
-  Future<void> createUser(String userId, String customerId) async {
-    await _firestore.collection('users').doc(userId).set({
-      'id': userId,
-      'displayName': 'Flutter大学生',
+  /// user を新規作成する
+  Future<void> createUser(auth.User? user, String customerId) async {
+    await _firestore.collection('users').doc(user?.uid).set({
+      'id': user?.uid,
+      'displayName': user?.displayName,
+      'email': user?.email,
       'customerId': customerId,
     });
   }
 
+  /// 単一取得
   Future<User> fetch() async {
     final id = auth.FirebaseAuth.instance.currentUser?.uid;
     final doc = await _firestore.collection('users').doc(id).get();

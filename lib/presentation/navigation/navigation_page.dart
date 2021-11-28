@@ -10,7 +10,7 @@ class NavigationPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<NavigationModel>(
-      create: (_) => NavigationModel()..init(),
+      create: (_) => NavigationModel(),
       child: Consumer<NavigationModel>(
         builder: (context, model, child) {
           final List<String> _tabNames = [

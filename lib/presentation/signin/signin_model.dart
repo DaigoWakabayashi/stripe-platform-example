@@ -2,8 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:stripe_platform_example/repository/stripe_repository.dart';
+import 'package:stripe_platform_example/repository/user_repository.dart';
 
 class SignInModel extends ChangeNotifier {
+  final userRepo = UserRepository();
+  final stripeRepo = StripeRepository();
+
   Future<void> signIn() async {
     // Google ログイン
     final credential = await _signInWithGoogle();
@@ -15,14 +20,12 @@ class SignInModel extends ChangeNotifier {
 
     // user ドキュメントがない場合は作成する
     if (!doc.exists) {
-      // todo : Stripe Customer の作成
+      /// Stripe の customer（お金を受け取るアカウント）を作成
+      final customerId =
+          await stripeRepo.createCustomer(credential.user?.email ?? '');
 
       // user ドキュメントを作成
-      await FirebaseFirestore.instance.collection('users').doc(userId).set({
-        'id': userId,
-        'displayName': credential.user?.displayName,
-        'email': credential.user?.email,
-      });
+      await userRepo.createUser(credential.user, customerId);
     }
   }
 
