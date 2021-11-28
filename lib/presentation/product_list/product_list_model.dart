@@ -3,15 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:stripe_platform_example/domain/product.dart';
 import 'package:stripe_platform_example/domain/user.dart';
 import 'package:stripe_platform_example/repository/product_repository.dart';
+import 'package:stripe_platform_example/repository/user_repository.dart';
 
 class ProductListModel extends ChangeNotifier {
   List<Product> products = [];
+  User? user;
   bool isLoading = false;
 
+  final userRepo = UserRepository();
   final productRepo = ProductRepository();
 
   Future<void> fetch() async {
     _startLoading();
+    // ユーザー取得
+    user = await userRepo.fetch();
     // 商品一覧を取得
     products = await productRepo.fetchProducts();
     // 出品者を取得

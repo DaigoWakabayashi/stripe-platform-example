@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stripe_platform_example/presentation/add_product/add_product_page.dart';
 import 'package:stripe_platform_example/utils/int_formatter.dart';
+import 'package:stripe_platform_example/utils/show_dialog.dart';
+import 'package:stripe_platform_example/utils/verification_status.dart';
 
 import 'product_list_model.dart';
 
@@ -48,15 +50,21 @@ class ProductListPage extends StatelessWidget {
               ),
             ),
             floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return const AddProductPage();
-                    },
-                    fullscreenDialog: true,
-                  ),
-                );
+              onPressed: () async {
+                // 認証済みの場合は商品を追加できる
+                if (model.user?.verificationStatus ==
+                    VerificationStatus.verified) {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const AddProductPage();
+                      },
+                      fullscreenDialog: true,
+                    ),
+                  );
+                } else {
+                  await showTextDialog(context, '「アカウント」から本人確認を行ってください');
+                }
               },
               child: const Icon(Icons.add),
             ),
