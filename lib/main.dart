@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:stripe_platform_example/presentation/navigation/navigation_page.dart';
+import 'package:stripe_platform_example/presentation/signin/signin_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +17,18 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'StripePlatFormSample',
       theme: ThemeData(primarySwatch: Colors.red),
-      home: const NavigationPage(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox();
+          }
+          if (snapshot.hasData) {
+            return const NavigationPage();
+          }
+          return const SignInPage();
+        },
+      ),
     );
   }
 }

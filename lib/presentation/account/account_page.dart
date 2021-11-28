@@ -17,7 +17,12 @@ class AccountPage extends StatelessWidget {
           ),
           body: Column(
             children: [
-              Text('アカウント'),
+              ElevatedButton(
+                onPressed: () async {
+                  await model.signOut();
+                },
+                child: const Text('ログアウト'),
+              ),
             ],
           ),
         );
