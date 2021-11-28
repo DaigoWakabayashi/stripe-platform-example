@@ -1,27 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:stripe_platform_example/domain/product.dart';
 
-class AccountModel extends ChangeNotifier {
-  final displayNameController = TextEditingController();
+class ProductListModel extends ChangeNotifier {
+  List<Product> products = [];
   bool isLoading = false;
 
-  void startLoading() {
+  Future<void> fetch() async {
+    _startLoading();
+    // 商品一覧を取得
+    final snap = await FirebaseFirestore.instance.collection('products').get();
+    products = snap.docs.map((e) => Product.fromJson(e.data())).toList();
+    _endLoading();
+  }
+
+  void _startLoading() {
     isLoading = true;
     notifyListeners();
   }
 
-  void endLoading() {
+  void _endLoading() {
     isLoading = false;
     notifyListeners();
-  }
-
-  Future<void> signUp() async {
-    final credential = await FirebaseAuth.instance.signInAnonymously();
-    final userId = credential.user?.uid;
-    await FirebaseFirestore.instance.collection('users').doc(userId).set({
-      'id': userId,
-      'displayName': displayNameController.text,
-    });
   }
 }

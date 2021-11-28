@@ -16,8 +16,8 @@ class AccountPage extends StatelessWidget {
             title: const Text('マイページ'),
           ),
           body: Column(
-            children: [
-              const Text('マイページ'),
+            children: const [
+              Text('マイページ'),
             ],
           ),
         );

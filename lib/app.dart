@@ -36,13 +36,13 @@ class App extends StatelessWidget {
       //   return CircularProgressIndicator();
 
       case UserState.noLogin:
-        return SignUpPage();
+        return const SignUpPage();
 
       case UserState.member: // サロンメンバー
-        return HomePage();
+        return const HomePage();
 
       default: // 不明
-        return SignUpPage();
+        return const SignUpPage();
     }
   }
 }
