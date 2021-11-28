@@ -38,10 +38,10 @@ class App extends StatelessWidget {
       case UserState.noLogin:
         return const SignUpPage();
 
-      case UserState.member: // サロンメンバー
+      case UserState.member:
         return const HomePage();
 
-      default: // 不明
+      default:
         return const SignUpPage();
     }
   }
