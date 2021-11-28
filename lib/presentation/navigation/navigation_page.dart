@@ -3,15 +3,15 @@ import 'package:provider/provider.dart';
 import 'package:stripe_platform_example/presentation/account/account_page.dart';
 import 'package:stripe_platform_example/presentation/product_list/product_list_page.dart';
 
-import 'home_model.dart';
+import 'navigation_model.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+class NavigationPage extends StatelessWidget {
+  const NavigationPage({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<HomeModel>(
-      create: (_) => HomeModel(),
-      child: Consumer<HomeModel>(
+    return ChangeNotifierProvider<NavigationModel>(
+      create: (_) => NavigationModel()..init(),
+      child: Consumer<NavigationModel>(
         builder: (context, model, child) {
           final List<String> _tabNames = [
             "商品一覧",
@@ -41,7 +41,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _topPageBody(BuildContext context) {
-    final model = Provider.of<HomeModel>(context);
+    final model = Provider.of<NavigationModel>(context);
     final currentIndex = model.currentIndex;
     return Stack(
       children: <Widget>[

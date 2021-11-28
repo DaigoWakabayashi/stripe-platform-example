@@ -12,6 +12,13 @@ class UserRepository {
   User _user = User();
   final _firestore = FirebaseFirestore.instance;
 
+  Future<void> createUser(String userId) async {
+    await _firestore.collection('users').doc(userId).set({
+      'id': userId,
+      'displayName': 'Flutter大学生',
+    });
+  }
+
   Future<User> fetch() async {
     final id = auth.FirebaseAuth.instance.currentUser?.uid;
     final doc = await _firestore.collection('users').doc(id).get();
