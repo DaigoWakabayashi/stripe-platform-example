@@ -9,6 +9,7 @@ import 'package:http/http.dart' as http;
 import 'package:stripe_platform_example/domain/stripe_individual.dart';
 import 'package:stripe_platform_example/domain/user.dart';
 import 'package:stripe_platform_example/repository/user_repository.dart';
+import 'package:stripe_platform_example/utils/validation_utils.dart';
 import 'package:stripe_sdk/stripe_sdk.dart';
 
 class IdentificationModel extends ChangeNotifier {
@@ -25,7 +26,7 @@ class IdentificationModel extends ChangeNotifier {
   }
 
   final String termText =
-      '''CodeBoyにおける講師向けの支払処理サービスは、Stripeが提供し、Stripe Connectアカウント契約( https://stripe.com/jp/connect-account/legal )（Stripe利用規約( https://stripe.com/jp/legal )を含み、総称して「Stripeサービス契約」といいます。）に従うものとします。本契約への同意又はCodeBoyにおいて講師としての取引の継続により、お客様はStripeサービス契約（随時Stripeにより修正されることがあり、その場合には修正されたものを含みます。）に拘束されることに同意するものとします。 Stripeを通じた支払処理サービスをCodeBoyができるようにするための条件として、お客様は、CodeBoyに対してお客様及びお客様の事業に関する正確かつ完全な情報を提供することに同意し、CodeBoyが当該情報及びStripeが提供する支払処理サービスのお客様による使用に関連する取引情報を共有することを認めるものとします。''';
+      '''Stripe Connectアカウント契約( https://stripe.com/jp/connect-account/legal )（Stripe利用規約( https://stripe.com/jp/legal )を含み、総称して「Stripeサービス契約」といいます。）''';
   final imageNoteText = '''
 ご利用いただける本人確認画像は以下となります
 - 運転免許証
@@ -52,7 +53,6 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
   StripeIndividual? individual;
   List<String> requirements = [];
   TosAcceptance? tosAcceptance;
-  bool _buttonTappedOnce = false;
   PlatformFile? identificationImageFront;
   PlatformFile? identificationImageBack;
   String? dobText; // そのまま送らない生年月日、validation用
@@ -62,19 +62,20 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
   /// 本人情報を取得
   Future fetchIndividual() async {
     try {
-      user = await _fetchTeacher();
+      user = await _fetchUser();
       // todo : StripeRepo に移管
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
         region: 'asia-northeast1',
-      ).httpsCallable('stripe-retrieveStripeConnectAccount');
+      ).httpsCallable('stripe-retrieveConnectAccount');
       final result = await callable.call({
         'accountId': user?.accountId,
       });
       final data = result.data;
-      final json = data['individual'];
+      final json = Map<String, dynamic>.from(data['individual']);
       individual = StripeIndividual.fromJson(json);
     } catch (e) {
+      print(e);
       // 新しいの入れる
       individual = StripeIndividual();
     } finally {
@@ -89,40 +90,19 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
     // todo : バリデーションかける
 
     try {
-      user = await _fetchTeacher();
+      user = await _fetchUser();
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
         region: 'asia-northeast1',
-      ).httpsCallable('stripe-updateStripeConnectAccount');
+      ).httpsCallable('stripe-updateConnectAccount');
       final _ = await callable.call({
         'accountId': user?.accountId,
         'individual': individual?.toJson(),
         'tos_acceptance': tosAcceptance?.toJson(),
       });
-
-      // 1秒に一回、statusをチェック（最大10回ループする）
-      // 現在のstatusから変更があった場合にループを止める
-      final maxRetry = 15;
-      int retryCount = 0;
-      while (retryCount < maxRetry) {
-        // statusを取得
-        final status = await _teacherRepo.fetchStatus(user?.accountId ?? '');
-        // 現在のステータスから変更があった場合
-        if (status == 'idInputted') {
-          // スナックバー出す
-          // showSnackBar(context, '本人情報を提出しました');
-          // 新しいstatusを取得
-          await fetchIndividual();
-          break;
-        }
-        // 1秒待つ
-        await Future.delayed(Duration(seconds: 1));
-        retryCount++;
-      }
     } catch (e) {
       print(e);
     } finally {
-      _buttonTappedOnce = true;
       endLoading();
     }
   }
@@ -130,6 +110,11 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
   /// 生年月日
   void setDob(String dobText) {
     this.dobText = dobText;
+
+    if (ValidationUtils.validateDob(dobText) != '') {
+      return;
+    }
+
     final List<String> dobArray = dobText.split('/');
     final newDob = Dob();
     newDob.year = int.parse(dobArray[0]);
@@ -166,7 +151,7 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
       final verification = StripeVerification(document);
       individual?.verification = verification;
 
-      final user = await _fetchTeacher();
+      final user = await _fetchUser();
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
         region: 'asia-northeast1',
@@ -207,7 +192,7 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
   Future uploadTosAcceptance() async {
     startLoading();
     try {
-      final user = await _fetchTeacher();
+      final user = await _fetchUser();
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
         region: 'asia-northeast1',
@@ -224,7 +209,7 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
   }
 
   /// user ドキュメントを返す
-  Future<User?> _fetchTeacher() async {
+  Future<User?> _fetchUser() async {
     final user = await _userRepo.fetch();
     return user;
   }
@@ -235,10 +220,8 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
       final url = Uri.parse('https://api.ipify.org');
       var response = await http.get(url);
       if (response.statusCode == 200) {
-        print(response.body);
         return response.body;
       } else {
-        print(response.body);
         return '';
       }
     } catch (e) {

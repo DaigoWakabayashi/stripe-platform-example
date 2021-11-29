@@ -7,8 +7,8 @@ class StripeIndividual {
   Dob? dob;
   Gender? gender = Gender.none;
   String? phoneNumber;
-  Address? addressKanji;
-  Address? addressKana;
+  Address? addressKanji = Address();
+  Address? addressKana = Address();
   StripeVerification? verification;
 
   StripeIndividual();
@@ -18,11 +18,13 @@ class StripeIndividual {
     firstNameKana = json['first_name_kana'];
     lastNameKanji = json['last_name_kanji'];
     lastNameKana = json['last_name_kana'];
-    dob = Dob.fromJson(json['dob']);
+    dob = Dob.fromJson(Map<String, dynamic>.from(json['dob']));
     phoneNumber = json['phone'].replaceFirst('+81', '0');
     gender = (json['gender'] as String).toEnumGender();
-    addressKanji = Address.fromJson(json['address_kanji']);
-    addressKana = Address.fromJson(json['address_kana']);
+    addressKanji =
+        Address.fromJson(Map<String, dynamic>.from(json['address_kanji']));
+    addressKana =
+        Address.fromJson(Map<String, dynamic>.from(json['address_kana']));
   }
 
   Map<String, dynamic> toJson() {
@@ -92,6 +94,7 @@ class Address {
   String? line1; // 番地、号
   String? line2; // 建物・部屋番号
 
+  Address();
   Address.fromJson(Map<String, dynamic> json) {
     postalCode = json['postal_code'];
     state = json['state'];

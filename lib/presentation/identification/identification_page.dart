@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:provider/provider.dart';
 import 'package:stripe_platform_example/domain/stripe_individual.dart';
 import 'package:stripe_platform_example/utils/show_dialog.dart';
@@ -126,368 +127,315 @@ class IdentificationPage extends StatelessWidget {
           child: Card(
             child: Padding(
               padding: const EdgeInsets.all(16),
-              child: AutofillGroup(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.lastNameKanji,
-                        onChanged: (text) {
-                          model.individual?.lastNameKanji = text;
-                        },
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person),
-                          labelText: '姓（漢字）',
-                          hintText: "田中",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.familyName],
-                      ),
+              child: Column(
+                children: [
+                  TextFormField(
+                    initialValue: model.individual?.lastNameKanji,
+                    onChanged: (text) {
+                      model.individual?.lastNameKanji = text;
+                    },
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.person),
+                      labelText: '姓（漢字）',
+                      hintText: "田中",
+                      border: OutlineInputBorder(),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.firstNameKanji,
-                        onChanged: (text) {
-                          model.individual?.firstNameKanji = text;
-                        },
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person),
-                          labelText: '名（漢字）',
-                          hintText: "太郎",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.givenName],
-                      ),
+                    autofillHints: [AutofillHints.familyName],
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.firstNameKanji,
+                    onChanged: (text) {
+                      model.individual?.firstNameKanji = text;
+                    },
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.person),
+                      labelText: '名（漢字）',
+                      hintText: "太郎",
+                      border: OutlineInputBorder(),
                     ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.lastNameKana,
-                        onChanged: (text) {
-                          model.individual?.lastNameKana = text;
-                        },
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person_outline),
-                          labelText: '姓（カタカナ）',
-                          hintText: "タナカ",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
+                    autofillHints: [AutofillHints.givenName],
+                  ),
+                  const Divider(),
+                  TextFormField(
+                    initialValue: model.individual?.lastNameKana,
+                    onChanged: (text) {
+                      model.individual?.lastNameKana = text;
+                    },
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.person_outline),
+                      labelText: '姓（カタカナ）',
+                      hintText: "タナカ",
+                      border: OutlineInputBorder(),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.firstNameKana,
-                        onChanged: (text) {
-                          model.individual?.firstNameKana = text;
-                        },
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.person_outline),
-                          labelText: '名（カタカナ）',
-                          hintText: "タロウ",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.firstNameKana,
+                    onChanged: (text) {
+                      model.individual?.firstNameKana = text;
+                    },
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.person_outline),
+                      labelText: '名（カタカナ）',
+                      hintText: "タロウ",
+                      border: OutlineInputBorder(),
                     ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.dob != null
-                            ? model.individual?.dob.toString()
-                            : '',
-                        onChanged: (text) {
-                          model.setDob(text);
-                        },
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          // MaskedInputFormater('####/##/##'),
-                        ],
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.calendar_today),
-                          labelText: '生年月日',
-                          hintText: "1991/07/15",
-                          border: OutlineInputBorder(),
+                  ),
+                  const Divider(),
+                  TextFormField(
+                    initialValue: model.individual?.dob != null
+                        ? model.individual?.dob.toString()
+                        : '',
+                    onChanged: (text) {
+                      model.setDob(text);
+                    },
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      MaskedInputFormatter('####/##/##'),
+                    ],
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.calendar_today),
+                      labelText: '生年月日',
+                      hintText: "1991/07/15",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const Divider(),
+                  DropdownButtonFormField<Gender>(
+                    value: individual?.gender,
+                    items: [
+                      DropdownMenuItem(
+                        value: Gender.none,
+                        child: Text(
+                          '選択してください',
                         ),
                       ),
+                      DropdownMenuItem(
+                        value: Gender.male,
+                        child: Text(
+                          '男性',
+                        ),
+                      ),
+                      DropdownMenuItem(
+                        value: Gender.female,
+                        child: Text(
+                          '女性',
+                        ),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      model.individual?.gender = value ?? Gender.none;
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.people_alt),
+                      labelText: '性別',
+                      hintText: "選択してください",
+                      border: OutlineInputBorder(),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DropdownButtonFormField<Gender>(
-                        value: individual?.gender,
-                        items: [
-                          DropdownMenuItem(
-                            value: Gender.none,
-                            child: Text(
-                              '選択してください',
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: Gender.male,
-                            child: Text(
-                              '男性',
-                            ),
-                          ),
-                          DropdownMenuItem(
-                            value: Gender.female,
-                            child: Text(
-                              '女性',
-                            ),
-                          ),
-                        ],
+                  ),
+                  Divider(),
+                  TextFormField(
+                    initialValue: model.individual?.phoneNumber,
+                    onChanged: (text) {
+                      model.individual?.phoneNumber = text;
+                    },
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.phone),
+                      labelText: '電話番号',
+                      hintText: "000-0000-0000",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  const Divider(),
+                  TextFormField(
+                    initialValue: model.individual?.addressKana?.postalCode,
+                    onChanged: (text) {
+                      model.individual?.addressKanji?.postalCode = text;
+                      model.individual?.addressKana?.postalCode = text;
+                    },
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      MaskedInputFormatter('###-####'),
+                    ],
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map),
+                      labelText: '郵便番号',
+                      hintText: "150-0001",
+                      border: OutlineInputBorder(),
+                    ),
+                    autofillHints: [AutofillHints.postalCode],
+                  ),
+                  const Divider(),
+                  TextFormField(
+                    initialValue: model.individual?.addressKanji?.state,
+                    onChanged: (text) {
+                      model.individual?.addressKanji?.state = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map),
+                      labelText: '都道府県',
+                      hintText: "東京都",
+                      border: OutlineInputBorder(),
+                    ),
+                    autofillHints: [AutofillHints.streetAddressLevel1],
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKanji?.city,
+                    onChanged: (text) {
+                      model.individual?.addressKanji?.city = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map),
+                      labelText: '市区町村',
+                      hintText: "渋谷区",
+                      border: OutlineInputBorder(),
+                    ),
+                    autofillHints: [AutofillHints.streetAddressLevel2],
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKanji?.town,
+                    onChanged: (text) {
+                      model.individual?.addressKanji?.town = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map),
+                      labelText: '丁目まで',
+                      hintText: "神宮前６丁目",
+                      border: OutlineInputBorder(),
+                    ),
+                    autofillHints: [AutofillHints.streetAddressLine1],
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKanji?.line1,
+                    onChanged: (text) {
+                      model.individual?.addressKanji?.line1 = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map),
+                      labelText: '番地、号',
+                      hintText: "20-10",
+                      border: OutlineInputBorder(),
+                    ),
+                    autofillHints: [AutofillHints.streetAddressLine2],
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKanji?.line2,
+                    onChanged: (text) {
+                      model.individual?.addressKanji?.line2 = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map),
+                      labelText: '建物・部屋番号',
+                      hintText: "KBOYビル102",
+                      border: OutlineInputBorder(),
+                    ),
+                    autofillHints: [AutofillHints.streetAddressLine3],
+                  ),
+                  const Divider(),
+                  TextFormField(
+                    initialValue: model.individual?.addressKana?.state,
+                    onChanged: (text) {
+                      model.individual?.addressKana?.state = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map_outlined),
+                      labelText: '都道府県（カタカナ）',
+                      hintText: "トウキョウト",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKana?.city,
+                    onChanged: (text) {
+                      model.individual?.addressKana?.city = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map_outlined),
+                      labelText: '市区町村（カタカナ）',
+                      hintText: "シブヤク",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKana?.town,
+                    onChanged: (text) {
+                      model.individual?.addressKana?.town = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map_outlined),
+                      labelText: '丁目まで（カタカナ）',
+                      hintText: "ジングウマエ６チョウメ",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKana?.line1,
+                    onChanged: (text) {
+                      model.individual?.addressKana?.line1 = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map_outlined),
+                      labelText: '番地、号（カタカナ）',
+                      hintText: "20-10",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  TextFormField(
+                    initialValue: model.individual?.addressKana?.line2,
+                    onChanged: (text) {
+                      model.individual?.addressKana?.line2 = text;
+                    },
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(Icons.map_outlined),
+                      labelText: '建物・部屋番号（カタカナ）',
+                      hintText: "KBOYビル102",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 8,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        value: model.isAcceptTerm,
                         onChanged: (value) {
-                          model.individual?.gender = value ?? Gender.none;
+                          model.setTosAcceptance(value!);
                         },
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.people_alt),
-                          labelText: '性別',
-                          hintText: "選択してください",
-                          border: OutlineInputBorder(),
-                        ),
                       ),
-                    ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.phoneNumber,
-                        onChanged: (text) {
-                          model.individual?.phoneNumber = text;
-                        },
-                        keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.phone),
-                          labelText: '電話番号',
-                          hintText: "000-0000-0000",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKana?.postalCode,
-                        onChanged: (text) {
-                          model.individual?.addressKanji?.postalCode = text;
-                          model.individual?.addressKana?.postalCode = text;
-                        },
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          // MaskedInputFormater('###-####'),
-                        ],
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map),
-                          labelText: '郵便番号',
-                          hintText: "150-0001",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.postalCode],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKanji?.state,
-                        onChanged: (text) {
-                          model.individual?.addressKanji?.state = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map),
-                          labelText: '都道府県',
-                          hintText: "東京都",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.streetAddressLevel1],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKanji?.city,
-                        onChanged: (text) {
-                          model.individual?.addressKanji?.city = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map),
-                          labelText: '市区町村',
-                          hintText: "渋谷区",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.streetAddressLevel2],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKanji?.town,
-                        onChanged: (text) {
-                          model.individual?.addressKanji?.town = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map),
-                          labelText: '丁目まで',
-                          hintText: "神宮前６丁目",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.streetAddressLine1],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKanji?.line1,
-                        onChanged: (text) {
-                          model.individual?.addressKanji?.line1 = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map),
-                          labelText: '番地、号',
-                          hintText: "20-10",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.streetAddressLine2],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKanji?.line2,
-                        onChanged: (text) {
-                          model.individual?.addressKanji?.line2 = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map),
-                          labelText: '建物・部屋番号',
-                          hintText: "KBOYビル102",
-                          border: OutlineInputBorder(),
-                        ),
-                        autofillHints: [AutofillHints.streetAddressLine3],
-                      ),
-                    ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKana?.state,
-                        onChanged: (text) {
-                          model.individual?.addressKana?.state = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map_outlined),
-                          labelText: '都道府県（カタカナ）',
-                          hintText: "トウキョウト",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKana?.city,
-                        onChanged: (text) {
-                          model.individual?.addressKana?.city = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map_outlined),
-                          labelText: '市区町村（カタカナ）',
-                          hintText: "シブヤク",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKana?.town,
-                        onChanged: (text) {
-                          model.individual?.addressKana?.town = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map_outlined),
-                          labelText: '丁目まで（カタカナ）',
-                          hintText: "ジングウマエ６チョウメ",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKana?.line1,
-                        onChanged: (text) {
-                          model.individual?.addressKana?.line1 = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map_outlined),
-                          labelText: '番地、号（カタカナ）',
-                          hintText: "20-10",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextFormField(
-                        initialValue: model.individual?.addressKana?.line2,
-                        onChanged: (text) {
-                          model.individual?.addressKana?.line2 = text;
-                        },
-                        keyboardType: TextInputType.text,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(Icons.map_outlined),
-                          labelText: '建物・部屋番号（カタカナ）',
-                          hintText: "KBOYビル102",
-                          border: OutlineInputBorder(),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Checkbox(
-                          value: model.isAcceptTerm,
-                          onChanged: (value) {
-                            model.setTosAcceptance(value!);
-                          },
-                        ),
-                        TextButton(
-                          style: ButtonStyle(
-                            padding: MaterialStateProperty.all(
-                              EdgeInsets.zero,
-                            ),
+                      TextButton(
+                        style: ButtonStyle(
+                          padding: MaterialStateProperty.all(
+                            EdgeInsets.zero,
                           ),
-                          child: Text('利用規約'),
-                          onPressed: () {
-                            // todo: 利用規約の表示
-                            // showLinkTextDialog(context, model.termText);
-                          },
                         ),
-                        Text(
-                          'へ同意する',
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                        child: Text('利用規約'),
+                        onPressed: () {
+                          // todo: 利用規約の表示
+                          // showLinkTextDialog(context, model.termText);
+                        },
+                      ),
+                      Text(
+                        'へ同意する',
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -560,12 +508,7 @@ class IdentificationPage extends StatelessWidget {
                             width: 8,
                           ),
                           model.identificationImageFront != null
-                              ? SizedBox(
-                                  width: 48,
-                                  height: 32,
-                                  child: Image.memory(
-                                      model.identificationImageFront!.bytes!),
-                                )
+                              ? Icon(Icons.check_circle)
                               : Container(
                                   width: 48,
                                   height: 32,
@@ -595,12 +538,7 @@ class IdentificationPage extends StatelessWidget {
                             width: 8,
                           ),
                           model.identificationImageBack != null
-                              ? SizedBox(
-                                  width: 48,
-                                  height: 32,
-                                  child: Image.memory(
-                                      model.identificationImageBack!.bytes!),
-                                )
+                              ? Icon(Icons.check_circle)
                               : Container(
                                   width: 48,
                                   height: 32,
