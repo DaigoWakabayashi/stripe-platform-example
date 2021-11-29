@@ -25,7 +25,7 @@ class UserRepository {
       'email': user?.email,
       'customerId': customerId,
       'accountId': accountId,
-      'verificationStatus': Status.approved.toEnumString,
+      'status': Status.unverified.toEnumString,
     });
   }
 

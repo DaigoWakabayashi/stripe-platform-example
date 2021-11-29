@@ -1,13 +1,12 @@
 import 'dart:convert';
 
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:stripe_platform_example/domain/stripe_individual.dart';
 import 'package:stripe_platform_example/domain/user.dart';
+import 'package:stripe_platform_example/repository/stripe_repository.dart';
 import 'package:stripe_platform_example/repository/user_repository.dart';
 import 'package:stripe_platform_example/utils/validation_utils.dart';
 import 'package:stripe_sdk/stripe_sdk.dart';
@@ -47,11 +46,10 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
 ''';
 
   final _userRepo = UserRepository();
-  final _teacherRepo = UserRepository();
+  final _stripeRepo = StripeRepository();
 
   bool isAcceptTerm = false;
   StripeIndividual? individual;
-  List<String> requirements = [];
   TosAcceptance? tosAcceptance;
   PlatformFile? identificationImageFront;
   PlatformFile? identificationImageBack;
@@ -63,16 +61,7 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
   Future fetchIndividual() async {
     try {
       user = await _fetchUser();
-      // todo : StripeRepo に移管
-      final callable = FirebaseFunctions.instanceFor(
-        app: Firebase.app(),
-        region: 'asia-northeast1',
-      ).httpsCallable('stripe-retrieveConnectAccount');
-      final result = await callable.call({
-        'accountId': user?.accountId,
-      });
-      final data = result.data;
-      final json = Map<String, dynamic>.from(data['individual']);
+      final json = await _stripeRepo.retrieveConnectAccount(user);
       individual = StripeIndividual.fromJson(json);
     } catch (e) {
       print(e);
@@ -86,20 +75,13 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
   /// Stripe に本人確認情報を送信する
   Future updateIndividual() async {
     startLoading();
-
-    // todo : バリデーションかける
-
     try {
       user = await _fetchUser();
-      final callable = FirebaseFunctions.instanceFor(
-        app: Firebase.app(),
-        region: 'asia-northeast1',
-      ).httpsCallable('stripe-updateConnectAccount');
-      final _ = await callable.call({
-        'accountId': user?.accountId,
-        'individual': individual?.toJson(),
-        'tos_acceptance': tosAcceptance?.toJson(),
-      });
+      await _stripeRepo.updateConnectAccount(
+        user,
+        individual,
+        tosAcceptance,
+      );
     } catch (e) {
       print(e);
     } finally {
@@ -152,35 +134,11 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
       individual?.verification = verification;
 
       final user = await _fetchUser();
-      final callable = FirebaseFunctions.instanceFor(
-        app: Firebase.app(),
-        region: 'asia-northeast1',
-      ).httpsCallable('stripe-updateConnectAccount');
-      final _ = await callable.call({
-        'accountId': user?.accountId,
-        'individual': individual?.toJson(),
-        'tos_acceptance': tosAcceptance?.toJson(),
-      });
-    } catch (e) {
-      print(e);
-    } finally {
-      endLoading();
-    }
-  }
-
-  /// 利用規約への同意
-  Future uploadTosAcceptance() async {
-    startLoading();
-    try {
-      final user = await _fetchUser();
-      final callable = FirebaseFunctions.instanceFor(
-        app: Firebase.app(),
-        region: 'asia-northeast1',
-      ).httpsCallable('stripe-updateTosAcceptance');
-      final _ = await callable.call({
-        'accountId': user?.accountId,
-        'tos_acceptance': tosAcceptance?.toJson(),
-      });
+      await _stripeRepo.updateConnectAccount(
+        user,
+        individual,
+        tosAcceptance,
+      );
     } catch (e) {
       print(e);
     } finally {
@@ -200,6 +158,7 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
       final url = Uri.parse('https://api.ipify.org');
       var response = await http.get(url);
       if (response.statusCode == 200) {
+        print(response.body);
         return response.body;
       } else {
         return '';
@@ -253,7 +212,6 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
     headers['User-Agent'] = 'StripeSDK/v2';
     headers['Authorization'] = 'Bearer $key';
 
-    print(file);
     final request = http.MultipartRequest(method, uri);
     request.headers.addAll(headers);
 

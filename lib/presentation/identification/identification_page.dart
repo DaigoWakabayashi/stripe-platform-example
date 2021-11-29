@@ -52,7 +52,7 @@ class IdentificationPage extends StatelessWidget {
   Widget _stepGuideWidget(BuildContext context, IdentificationModel model) {
     final status = model.user?.status?.toEnumString;
 
-    final bool isAllStepNotCompletedYet = status == 'approved';
+    final bool isAllStepNotCompletedYet = status == 'unverified';
     final bool isStep1Completed = status == 'idInputted';
     final bool isStep2Completed = status == 'verified';
 
@@ -104,7 +104,7 @@ class IdentificationPage extends StatelessWidget {
     final status = model.user?.status?.toEnumString;
 
     switch (status) {
-      case 'approved':
+      case 'unverified':
         return _firstStepBody(context, model);
       case 'idInputted':
         return _secondStepBody(context, model);

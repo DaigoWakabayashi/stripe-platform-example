@@ -92,6 +92,9 @@ export const createConnectAccount = functions.region("asia-northeast1").https.on
             card_payments: { requested: true },
             transfers: { requested: true },
         },
+        individual: {
+            email: data.email,
+        },
         settings: {
             payouts: {
                 schedule: {

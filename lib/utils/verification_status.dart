@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 enum Status {
-  approved,
+  unverified,
   idInputted,
   verified,
   unknown,
@@ -10,8 +10,8 @@ enum Status {
 extension StatusExtension on Status {
   static Status parseUserStatus(String value) {
     switch (value) {
-      case 'approved':
-        return Status.approved;
+      case 'unverified':
+        return Status.unverified;
       case 'idInputted':
         return Status.idInputted;
       case 'verified':
