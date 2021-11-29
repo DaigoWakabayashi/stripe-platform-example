@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:stripe_platform_example/presentation/edit_card/edit_card_page.dart';
+import 'package:stripe_platform_example/presentation/identification/identification_page.dart';
 import 'package:stripe_platform_example/utils/verification_status.dart';
 
 import 'account_model.dart';
@@ -44,7 +45,13 @@ class AccountPage extends StatelessWidget {
                 const Divider(),
                 ListTile(
                   onTap: () {
-                    // todo : 本人確認画面へ
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) {
+                          return const IdentificationPage();
+                        },
+                      ),
+                    );
                   },
                   title: const Text('本人確認'),
                   trailing: const Icon(Icons.arrow_forward_ios),
