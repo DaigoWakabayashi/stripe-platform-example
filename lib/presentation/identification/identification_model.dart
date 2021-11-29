@@ -155,32 +155,12 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
       final callable = FirebaseFunctions.instanceFor(
         app: Firebase.app(),
         region: 'asia-northeast1',
-      ).httpsCallable('stripe-updateStripeConnectAccount');
+      ).httpsCallable('stripe-updateConnectAccount');
       final _ = await callable.call({
         'accountId': user?.accountId,
         'individual': individual?.toJson(),
         'tos_acceptance': tosAcceptance?.toJson(),
       });
-
-      // 1秒に一回、statusをチェック（最大10回ループする）
-      // 現在のstatusから変更があった場合にループを止める
-      final maxRetry = 10;
-      int retryCount = 0;
-      while (retryCount < maxRetry) {
-        // statusを取得
-        final status = await _teacherRepo.fetchStatus(user?.id ?? '');
-        // 現在のステータスから変更があった場合
-        if (status != user?.status) {
-          // スナックバー出す
-          // showSnackBar(context, '身分証明書の提出が完了しました');
-          // 新しいstatusを取得
-          await fetchIndividual();
-          break;
-        }
-        // 1秒待つ
-        await Future.delayed(Duration(seconds: 1));
-        retryCount++;
-      }
     } catch (e) {
       print(e);
     } finally {
@@ -251,6 +231,7 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['jpg', 'png'],
+      withData: true,
     );
     if (result == null) {
       return;
@@ -261,7 +242,7 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
 
   /// Stripe に画像をアップロードする
   Future<String> _uploadPhoto(PlatformFile file) async {
-    final method = 'POST';
+    const method = 'POST';
     final key = dotenv.env['STRIPE_PK'] as String;
     final uri = Uri.parse('https://files.stripe.com/v1/files');
 
@@ -270,16 +251,16 @@ Stripeは業界においてPCIレベル1に準拠した最高水準のセキュ�
     headers['Accept'] = 'application/json';
     headers['Content-Type'] = 'application/x-www-form-urlencoded';
     headers['User-Agent'] = 'StripeSDK/v2';
-    headers['Authorization'] = 'Bearer ${key}';
+    headers['Authorization'] = 'Bearer $key';
 
+    print(file);
     final request = http.MultipartRequest(method, uri);
     request.headers.addAll(headers);
 
     final imageValue = http.MultipartFile.fromBytes(
       'file',
-      file.bytes!.toList(),
+      file.bytes!,
       filename: file.name,
-      // contentType: MediaType('application', 'octet-stream'),
     );
     request.files.add(imageValue);
 
