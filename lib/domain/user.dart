@@ -7,7 +7,7 @@ class User {
   String? customerId;
   String? accountId;
   String? sourceId;
-  VerificationStatus? verificationStatus;
+  Status? status;
 
   User({
     this.id,
@@ -16,7 +16,7 @@ class User {
     this.customerId,
     this.accountId,
     this.sourceId,
-    this.verificationStatus,
+    this.status,
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -26,7 +26,6 @@ class User {
     customerId = json['customerId'];
     accountId = json['accountId'];
     sourceId = json['sourceId'];
-    verificationStatus =
-        StatusExtension.parseUserStatus(json['verificationStatus'] as String);
+    status = StatusExtension.parseUserStatus(json['status'] as String);
   }
 }

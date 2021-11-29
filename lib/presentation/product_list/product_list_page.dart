@@ -52,8 +52,7 @@ class ProductListPage extends StatelessWidget {
             floatingActionButton: FloatingActionButton(
               onPressed: () async {
                 // 認証済みの場合は商品を追加できる
-                if (model.user?.verificationStatus ==
-                    VerificationStatus.verified) {
+                if (model.user?.status == Status.verified) {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) {

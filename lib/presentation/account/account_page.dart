@@ -27,7 +27,7 @@ class AccountPage extends StatelessWidget {
                   size: 64,
                 ),
                 Text(user?.displayName ?? ''),
-                Text('認証ステータス : ${user?.verificationStatus?.toEnumString}'),
+                Text('認証ステータス : ${user?.status?.toEnumString}'),
                 const Divider(),
                 ListTile(
                   onTap: () {

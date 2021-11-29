@@ -1,23 +1,23 @@
 import 'package:flutter/foundation.dart';
 
-enum VerificationStatus {
-  unverified,
-  pending,
+enum Status {
+  approved,
+  idInputted,
   verified,
   unknown,
 }
 
-extension StatusExtension on VerificationStatus {
-  static VerificationStatus parseUserStatus(String value) {
+extension StatusExtension on Status {
+  static Status parseUserStatus(String value) {
     switch (value) {
-      case 'unverified':
-        return VerificationStatus.unverified;
-      case 'pending':
-        return VerificationStatus.pending;
+      case 'approved':
+        return Status.approved;
+      case 'idInputted':
+        return Status.idInputted;
       case 'verified':
-        return VerificationStatus.verified;
+        return Status.verified;
     }
-    return VerificationStatus.unknown;
+    return Status.unknown;
   }
 
   String get toEnumString => describeEnum(this);

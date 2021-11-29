@@ -27,6 +27,10 @@ dependencies:
   stripe_sdk: ^5.0.0-nullsafety.0
   flutter_dotenv: ^5.0.2
   flutter_multi_formatter: ^2.3.8
+  file_picker: ^4.2.5
+  http: ^0.13.4
+
+#  mask_text_input_formatter: ^2.0.0
 
 
 

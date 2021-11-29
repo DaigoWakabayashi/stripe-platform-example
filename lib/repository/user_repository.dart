@@ -25,7 +25,7 @@ class UserRepository {
       'email': user?.email,
       'customerId': customerId,
       'accountId': accountId,
-      'verificationStatus': VerificationStatus.unverified.toEnumString,
+      'verificationStatus': Status.approved.toEnumString,
     });
   }
 
@@ -38,6 +38,16 @@ class UserRepository {
       _user = User.fromJson(data);
     }
     return _user;
+  }
+
+  /// statusを返す
+  Future<String> fetchStatus(String id) async {
+    try {
+      final doc = await _firestore.collection('users').doc(id).get();
+      return doc.data()?['status'];
+    } catch (e) {
+      return 'unknown';
+    }
   }
 
   /// ローカルキャッシュを削除
