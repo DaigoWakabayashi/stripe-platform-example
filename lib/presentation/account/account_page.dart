@@ -58,14 +58,6 @@ class AccountPage extends StatelessWidget {
                   trailing: const Icon(Icons.arrow_forward_ios),
                 ),
                 const Divider(),
-                ListTile(
-                  onTap: () {
-                    // todo : 銀行口座画面へ
-                  },
-                  title: const Text('銀行口座'),
-                  trailing: const Icon(Icons.arrow_forward_ios),
-                ),
-                const Divider(),
                 ElevatedButton(
                   onPressed: () async {
                     await model.signOut();
