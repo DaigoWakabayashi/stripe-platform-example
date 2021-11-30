@@ -27,7 +27,6 @@ class IdentificationModel extends ChangeNotifier {
   final String termText =
       '''Stripe Connectアカウント契約( https://stripe.com/jp/connect-account/legal )（Stripe利用規約( https://stripe.com/jp/legal )を含み、総称して「Stripeサービス契約」といいます。）''';
   final imageNoteText = '''
-ご利用いただける本人確認画像は以下となります
 - 運転免許証
 - パスポート
 - 外国国籍を持つ方の場合は在留カード
@@ -38,11 +37,6 @@ class IdentificationModel extends ChangeNotifier {
 - ファイルサイズ5MB以内
 - 8000px以下
 - .pngもしくは.jpgの形式
-本人確認およびクレジットカード決済については、Stripeを利用しています。
-
-Stripeは業界においてPCIレベル1に準拠した最高水準のセキュリティを誇り、ご提供いただいたユーザーの全ての情報についても、安全が確保された状態で保管を行っております。
-・Stripeにおけるセキュリティについて→ https://stripe.com/docs/security/stripe
-・Stripeのプライバシーポリシーについて→ https://stripe.com/jp/privacy
 ''';
 
   final _userRepo = UserRepository();

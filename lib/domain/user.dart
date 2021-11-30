@@ -8,6 +8,7 @@ class User {
   String? accountId;
   String? sourceId;
   Status? status;
+  bool? chargesEnabled;
 
   User({
     this.id,
@@ -17,6 +18,7 @@ class User {
     this.accountId,
     this.sourceId,
     this.status,
+    this.chargesEnabled,
   });
 
   User.fromJson(Map<String, dynamic> json) {
@@ -27,5 +29,6 @@ class User {
     accountId = json['accountId'];
     sourceId = json['sourceId'];
     status = StatusExtension.parseUserStatus(json['status'] as String);
+    chargesEnabled = json['chargesEnabled'];
   }
 }

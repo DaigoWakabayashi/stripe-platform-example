@@ -2,7 +2,6 @@ import 'package:flutter/foundation.dart';
 
 enum Status {
   unverified,
-  idInputted,
   verified,
   unknown,
 }
@@ -12,8 +11,6 @@ extension StatusExtension on Status {
     switch (value) {
       case 'unverified':
         return Status.unverified;
-      case 'idInputted':
-        return Status.idInputted;
       case 'verified':
         return Status.verified;
     }

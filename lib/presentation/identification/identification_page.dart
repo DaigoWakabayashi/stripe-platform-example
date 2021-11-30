@@ -37,86 +37,26 @@ class IdentificationPage extends StatelessWidget {
     }
     return Column(
       children: [
-        const SizedBox(
-          height: 16,
-        ),
-        _stepGuideWidget(context, model),
-        const SizedBox(
-          height: 16,
-        ),
         _currentStepWidget(context, model),
       ],
     );
   }
 
-  Widget _stepGuideWidget(BuildContext context, IdentificationModel model) {
-    final status = model.user?.status?.toEnumString;
-
-    final bool isAllStepNotCompletedYet = status == 'unverified';
-    final bool isStep1Completed = status == 'idInputted';
-    final bool isStep2Completed = status == 'verified';
-
-    return ConstrainedBox(
-      constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Column(
-            children: [
-              Icon(
-                isStep1Completed || isStep2Completed
-                    ? Icons.verified
-                    : Icons.verified_outlined,
-                color: isAllStepNotCompletedYet ? Colors.black : Colors.grey,
-              ),
-              Text(
-                '1. 本人情報の入力',
-                style: TextStyle(
-                  color: isAllStepNotCompletedYet ? Colors.black : Colors.grey,
-                ),
-              ),
-            ],
-          ),
-          Icon(
-            Icons.arrow_forward,
-            color: Colors.grey,
-          ),
-          Column(
-            children: [
-              Icon(
-                isStep2Completed ? Icons.verified : Icons.verified_outlined,
-                color: isStep1Completed ? Colors.black : Colors.grey,
-              ),
-              Text(
-                '2. 身分証明書の提出',
-                style: TextStyle(
-                  color: isStep1Completed ? Colors.black : Colors.grey,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _currentStepWidget(BuildContext context, IdentificationModel model) {
-    final status = model.user?.status?.toEnumString;
+    final status = model.user?.status;
 
     switch (status) {
-      case 'unverified':
-        return _firstStepBody(context, model);
-      case 'idInputted':
-        return _secondStepBody(context, model);
-      case 'verified':
-        return _underReviewAndCompleteStepBody(context, model);
+      case Status.unverified:
+        return _unverifiedBody(context, model);
+      case Status.verified:
+        return _verifiedBody(context, model);
       default:
         return Container();
     }
   }
 
   /// 本人情報の入力画面
-  Widget _firstStepBody(BuildContext context, IdentificationModel model) {
+  Widget _unverifiedBody(BuildContext context, IdentificationModel model) {
     final individual = model.individual;
 
     return Column(
@@ -409,6 +349,85 @@ class IdentificationPage extends StatelessWidget {
                   SizedBox(
                     height: 8,
                   ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        child: Text(
+                          '写真付き身分証明書 - 表',
+                        ),
+                        onPressed: () {
+                          model.showIdentificationImageFrontPicker();
+                        },
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      model.identificationImageFront != null
+                          ? Icon(Icons.check_circle)
+                          : Container(
+                              width: 48,
+                              height: 32,
+                              color: Colors.black12,
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.grey,
+                              ),
+                            )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        child: Text(
+                          '写真付き身分証明書 - 裏',
+                        ),
+                        onPressed: () {
+                          model.showIdentificationImageBackPicker();
+                        },
+                      ),
+                      SizedBox(
+                        width: 8,
+                      ),
+                      model.identificationImageBack != null
+                          ? Icon(Icons.check_circle)
+                          : Container(
+                              width: 48,
+                              height: 32,
+                              color: Colors.black12,
+                              child: Icon(
+                                Icons.person_outline,
+                                color: Colors.grey,
+                              ),
+                            )
+                    ],
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  InkWell(
+                    child: Text(
+                      '身分証明書の画像についての注意事項',
+                      style: TextStyle(
+                        color: Colors.blue,
+                        fontSize: 12,
+                      ),
+                    ),
+                    onTap: () {
+                      // 利用規約の表示
+                      showTextDialog(context, model.imageNoteText);
+                    },
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -426,11 +445,11 @@ class IdentificationPage extends StatelessWidget {
                         ),
                         child: Text('利用規約'),
                         onPressed: () {
-                          // todo: 利用規約の表示
-                          // showLinkTextDialog(context, model.termText);
+                          // 利用規約の表示
+                          showTextDialog(context, model.termText);
                         },
                       ),
-                      Text(
+                      SelectableText(
                         'へ同意する',
                       ),
                     ],
@@ -447,12 +466,14 @@ class IdentificationPage extends StatelessWidget {
           child: SizedBox(
             height: 44,
             child: ElevatedButton(
-              child: Text('本人情報を登録する'),
+              child: Text('アップロード'),
               onPressed: model.isAcceptTerm
                   ? () async {
                       try {
-                        // 設定する
-                        model.updateIndividual();
+                        await model.updateIndividual();
+                        await model.uploadIdImages();
+                        await showTextDialog(context, '本人確認情報をアップロードしました');
+                        Navigator.of(context).pop();
                       } catch (e) {
                         showTextDialog(context, e.toString());
                       }
@@ -468,175 +489,12 @@ class IdentificationPage extends StatelessWidget {
     );
   }
 
-  /// 本人書類の提出画面
-  Widget _secondStepBody(BuildContext context, IdentificationModel model) {
-    final individual = model.individual;
-
-    if (individual == null) {
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    }
-    return Column(
-      children: [
-        Container(
-          constraints: BoxConstraints(
-            maxWidth: 640,
-          ),
-          child: Card(
-            child: Stack(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            child: Text(
-                              '写真付き身分証明書 - 表',
-                            ),
-                            onPressed: () {
-                              model.showIdentificationImageFrontPicker();
-                            },
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          model.identificationImageFront != null
-                              ? Icon(Icons.check_circle)
-                              : Container(
-                                  width: 48,
-                                  height: 32,
-                                  color: Colors.black12,
-                                  child: Icon(
-                                    Icons.person,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            child: Text(
-                              '写真付き身分証明書 - 裏',
-                            ),
-                            onPressed: () {
-                              model.showIdentificationImageBackPicker();
-                            },
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          model.identificationImageBack != null
-                              ? Icon(Icons.check_circle)
-                              : Container(
-                                  width: 48,
-                                  height: 32,
-                                  color: Colors.black12,
-                                  child: Icon(
-                                    Icons.person_outline,
-                                    color: Colors.grey,
-                                  ),
-                                )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      InkWell(
-                        child: Text(
-                          '身分証明書の画像についての注意事項',
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 12,
-                          ),
-                        ),
-                        onTap: () {
-                          // 利用規約の表示
-                          showTextDialog(context, model.imageNoteText);
-                        },
-                      ),
-                      SizedBox(
-                        height: 16,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Checkbox(
-                            value: model.isAcceptTerm,
-                            onChanged: (value) {
-                              model.setTosAcceptance(value!);
-                            },
-                          ),
-                          TextButton(
-                            style: ButtonStyle(
-                              padding: MaterialStateProperty.all(
-                                EdgeInsets.zero,
-                              ),
-                            ),
-                            child: Text('利用規約'),
-                            onPressed: () {
-                              // 利用規約の表示
-                              showTextDialog(context, model.termText);
-                            },
-                          ),
-                          SelectableText(
-                            'へ同意する',
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 16,
-        ),
-        Center(
-          child: SizedBox(
-            height: 44,
-            child: ElevatedButton(
-              child: Text('身分証明書を提出する'),
-              onPressed: model.isAcceptTerm
-                  ? () async {
-                      try {
-                        // 設定する
-                        model.uploadIdImages();
-                      } catch (e) {
-                        showTextDialog(context, e.toString());
-                      }
-                    }
-                  : null,
-            ),
-          ),
-        ),
-        SizedBox(
-          height: 64,
-        ),
-      ],
-    );
-  }
-
-  /// Stripeレビュー中・本人確認完了画面
-  Widget _underReviewAndCompleteStepBody(
-      BuildContext context, IdentificationModel model) {
+  /// 本人確認完了画面
+  Widget _verifiedBody(BuildContext context, IdentificationModel model) {
     final individual = model.individual;
     return Container(
       constraints: BoxConstraints(
-        maxWidth: 120,
+        maxWidth: MediaQuery.of(context).size.width,
       ),
       child: Card(
         child: Padding(
@@ -646,89 +504,89 @@ class IdentificationPage extends StatelessWidget {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
+                children: const [
                   Icon(
                     Icons.verified,
                     color: Colors.green,
                   ),
                   SizedBox(width: 8),
-                  SelectableText(
+                  Text(
                     'Stripeによる本人確認が完了しました\n以下の内容で本人確認済みです',
                   ),
                 ],
               ),
-              SizedBox(height: 8),
+              const SizedBox(height: 8),
               Row(
                 children: [
-                  SelectableText(
+                  Text(
                     individual?.lastNameKanji ?? '',
                   ),
-                  SizedBox(width: 8),
-                  SelectableText(
+                  const SizedBox(width: 8),
+                  Text(
                     individual?.firstNameKanji ?? '',
                   ),
                 ],
               ),
-              Divider(),
+              const Divider(),
               Row(
                 children: [
-                  SelectableText(
+                  Text(
                     individual?.lastNameKana ?? '',
                   ),
                   SizedBox(width: 4),
-                  SelectableText(
+                  Text(
                     individual?.firstNameKana ?? '',
                   ),
                 ],
               ),
-              Divider(),
-              SelectableText(
+              const Divider(),
+              Text(
                 individual?.dob.toString() ?? '',
               ),
-              Divider(),
-              SelectableText(
+              const Divider(),
+              Text(
                 individual?.gender == Gender.male ? '男性' : '女性',
               ),
-              Divider(),
-              SelectableText(
+              const Divider(),
+              Text(
                 individual?.phoneNumber ?? '',
               ),
-              Divider(),
-              SelectableText(
+              const Divider(),
+              Text(
                 individual?.addressKanji?.postalCode ?? '',
               ),
-              SelectableText(
+              Text(
                 individual?.addressKanji?.state ?? '',
               ),
-              SelectableText(
+              Text(
                 individual?.addressKanji?.city ?? '',
               ),
-              SelectableText(
+              Text(
                 individual?.addressKanji?.town ?? '',
               ),
-              SelectableText(
+              Text(
                 individual?.addressKanji?.line1 ?? '',
               ),
               individual?.addressKanji?.line2 != null
-                  ? SelectableText(
+                  ? Text(
                       individual!.addressKanji!.line2!,
                     )
                   : const SizedBox(),
-              Divider(),
-              SelectableText(
+              const Divider(),
+              Text(
                 individual?.addressKana?.state ?? '',
               ),
-              SelectableText(
+              Text(
                 individual?.addressKana?.city ?? '',
               ),
-              SelectableText(
+              Text(
                 individual?.addressKana?.town ?? '',
               ),
-              SelectableText(
+              Text(
                 individual?.addressKana?.line1 ?? '',
               ),
               individual?.addressKana?.line2 != null
-                  ? SelectableText(
+                  ? Text(
                       individual!.addressKana!.line2!,
                     )
                   : const SizedBox(),

@@ -26,6 +26,7 @@ class UserRepository {
       'customerId': customerId,
       'accountId': accountId,
       'status': Status.unverified.toEnumString,
+      'chargesEnabled': false,
     });
   }
 

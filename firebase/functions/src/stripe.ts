@@ -88,6 +88,11 @@ export const createConnectAccount = functions.region("asia-northeast1").https.on
         country: 'JP',
         email: data.email,
         business_type: 'individual',
+        business_profile: {
+                mcc: '5734', // 業種コード（5834 → Computer Software Stores）
+                url: 'https://github.com/DaigoWakabayashi/stripe-platform-example', // 事業のウェブサイト
+                product_description: 'プラットフォーム型サービスのテストアカウントです', // 事業の内容
+            },
         capabilities: {
             card_payments: { requested: true },
             transfers: { requested: true },
@@ -129,22 +134,39 @@ export const retrieveConnectAccount = functions.region("asia-northeast1").https.
 });
 
 
-// Stripe の account オブジェクト からステータスを判断するロジック
-const _updateNpoProjectStatus = async (account: any) => {
+// Firestore の user ステータスを変更する
+const _updateUserStatus = async (account: any) => {
     const db = firebaseAdmin.firestore();
     const accountData = account;
-    /// accountIdから該当のNPOを取得
-    const snap = await db.collection('projects').where('stripeAccountId', '==', accountData.id).get();
-    console.log(snap.docs);
+    /// accountId から該当の user を取得
+    const snap = await db.collection('users').where('accountId', '==', accountData.id).get();
+    const userDoc = snap.docs[0];
+    // 現在のステータスを取得
+    const currentStatus = userDoc.data()['status'];
+    console.log('現在のstatus:', currentStatus);
+    let stripeStatus = currentStatus;
+    // 次のステータスを代入
+    stripeStatus = accountData.individual.verification.status; // stripeのstatus（ unverified, pending, verified )
+    const chargesEnabled = accountData.charges_enabled; // 被決済の可否
+
+    /// Firestoreのstatusを変更
+    console.log('次のstatus:', stripeStatus);
+    await userDoc.ref.update({
+        'status': stripeStatus,
+        'chargesEnabled': chargesEnabled,
+    });
 }
 
 // MARK: Connect Account の update をトリガーに、Firestoreのstatusを変更する（Stripeから呼ばれる関数）
 export const updateStripeAccountStatus = functions.region("asia-northeast1").https.onRequest(async (req, res) => {
     const event = req.body;
+    console.log('event %j', event);
     const account = event.data.object;
+    console.log('account %j', account);
+
     try {
         // event 内の account オブジェクトから status を判断する
-        await _updateNpoProjectStatus(account);
+        await _updateUserStatus(account);
         res.status(200).json({ received: true });
     } catch (error) {
         console.log('エラー', error);
