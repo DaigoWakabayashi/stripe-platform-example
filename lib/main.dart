@@ -20,6 +20,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'StripePlatFormSample',
       theme: ThemeData(primarySwatch: Colors.red),
+      debugShowCheckedModeBanner: false,
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
