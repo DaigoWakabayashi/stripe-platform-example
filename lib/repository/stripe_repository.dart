@@ -116,7 +116,10 @@ class StripeRepository {
 
   /// 単発プランを購入する
   Future createCharge(
-      String? customerId, int? amount, String? accountId) async {
+    String? customerId,
+    int? amount,
+    String? accountId,
+  ) async {
     // 単発プランの決済
     final callable = FirebaseFunctions.instanceFor(
       app: Firebase.app(),

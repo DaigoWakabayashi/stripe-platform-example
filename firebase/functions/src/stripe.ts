@@ -61,17 +61,22 @@ export const deleteCardInfo = functions.region("asia-northeast1").https.onCall((
 export const createStripeCharge = functions.region("asia-northeast1").https.onCall(async (data, context) => {
     const customer = data.customerId; // 顧客
     const amount = data.amount; // 支払い総額
+    const feeAmount = Math.floor(amount * 1 / 10); // 10%の手数料を引いた値を小数点以下で切り捨てる
+    const targetAccountId = data.targetAccountId; // 送金先のアカウント
 
     // 決済を作成
     const charge = await stripe.charges.create({
         customer: customer,
         amount: amount,
-        // todo : 手数料を取る
         currency: "jpy",
+        application_fee_amount: feeAmount,
+        transfer_data: {
+            destination: targetAccountId,
+        },
     }, {
         idempotencyKey: data.idempotencyKey,
     },);
-    
+    console.log('charges %j', charge);
     return {chargeId: charge.id};
 });
 

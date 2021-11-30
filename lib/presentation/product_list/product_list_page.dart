@@ -21,43 +21,58 @@ class ProductListPage extends StatelessWidget {
             appBar: AppBar(
               title: const Text('商品一覧'),
             ),
-            body: RefreshIndicator(
-              onRefresh: () async {
-                model.fetch();
-              },
-              child: GridView.count(
-                crossAxisCount: 2,
-                children: products
-                    .map(
-                      (product) => Card(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(product.name ?? ''),
-                            Text('¥ ${product.price.toSplitCommaString()}'),
-                            Text('出品者： ${product.owner?.displayName ?? ''}'),
-                            ElevatedButton(
-                              onPressed: () async {
-                                final isConfirmed = await showConfirmDialog(
-                                    context, '${product.name} を購入しますか？');
-                                // 購入処理
-                                if (isConfirmed) {
-                                  try {
-                                    await model.createCharge(product);
-                                    await showTextDialog(context, '購入しました');
-                                  } catch (e) {
-                                    await showTextDialog(context, e.toString());
-                                  }
-                                }
-                              },
-                              child: const Text('購入する'),
+            body: Stack(
+              children: [
+                RefreshIndicator(
+                  onRefresh: () async {
+                    model.fetch();
+                  },
+                  child: GridView.count(
+                    crossAxisCount: 2,
+                    children: products
+                        .map(
+                          (product) => Card(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(product.name ?? ''),
+                                Text('¥ ${product.price.toSplitCommaString()}'),
+                                Text(
+                                    '出品者： ${product.owner?.displayName ?? ''}'),
+                                ElevatedButton(
+                                  onPressed: () async {
+                                    final isConfirmed = await showConfirmDialog(
+                                        context, '${product.name} を購入しますか？');
+                                    // 購入処理
+                                    if (isConfirmed) {
+                                      try {
+                                        await model.createCharge(product);
+                                        await showTextDialog(context, '購入しました');
+                                      } catch (e) {
+                                        await showTextDialog(
+                                            context, e.toString());
+                                      }
+                                    }
+                                  },
+                                  child: const Text('購入する'),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+                Visibility(
+                  visible: model.isLoading,
+                  child: Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  ),
+                ),
+              ],
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () async {

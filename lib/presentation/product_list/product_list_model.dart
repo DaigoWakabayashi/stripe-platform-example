@@ -35,14 +35,25 @@ class ProductListModel extends ChangeNotifier {
     _endLoading();
   }
 
+  /// 決済する
   Future<void> createCharge(Product product) async {
     try {
       _startLoading();
+
+      // カードが設定されていない場合はバリデーション
       if (user?.sourceId == null) {
         throw 'クレジットカードを設定してください';
       }
+
+      // Stripe の Charge（決済）を作成
       await _stripeRepo.createCharge(
-          user?.customerId, product.price, product.owner?.accountId);
+        user?.customerId,
+        product.price,
+        product.owner?.accountId,
+      );
+
+      // todo : transaction 残したりする
+
     } catch (e) {
       throw e.toString();
     } finally {
