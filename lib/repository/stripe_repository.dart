@@ -109,4 +109,25 @@ class StripeRepository {
       'tos_acceptance': tosAcceptance?.toJson(),
     });
   }
+
+  ///
+  /// Charge（決済）
+  ///
+
+  /// 単発プランを購入する
+  Future createCharge(
+      String? customerId, int? amount, String? accountId) async {
+    // 単発プランの決済
+    final callable = FirebaseFunctions.instanceFor(
+      app: Firebase.app(),
+      region: 'asia-northeast1',
+    ).httpsCallable('stripe-createStripeCharge');
+
+    await callable.call({
+      'customerId': customerId,
+      'amount': amount,
+      'targetAccountId': accountId,
+      'idempotencyKey': const Uuid().v4(),
+    });
+  }
 }

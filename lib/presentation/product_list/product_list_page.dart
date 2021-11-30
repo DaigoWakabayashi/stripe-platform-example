@@ -37,8 +37,18 @@ class ProductListPage extends StatelessWidget {
                             Text('¥ ${product.price.toSplitCommaString()}'),
                             Text('出品者： ${product.owner?.displayName ?? ''}'),
                             ElevatedButton(
-                              onPressed: () {
-                                // todo : 購入処理
+                              onPressed: () async {
+                                final isConfirmed = await showConfirmDialog(
+                                    context, '${product.name} を購入しますか？');
+                                // 購入処理
+                                if (isConfirmed) {
+                                  try {
+                                    await model.createCharge(product);
+                                    await showTextDialog(context, '購入しました');
+                                  } catch (e) {
+                                    await showTextDialog(context, e.toString());
+                                  }
+                                }
                               },
                               child: const Text('購入する'),
                             ),
