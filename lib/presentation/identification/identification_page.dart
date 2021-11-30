@@ -35,14 +35,7 @@ class IdentificationPage extends StatelessWidget {
         child: CircularProgressIndicator(),
       );
     }
-    return Column(
-      children: [
-        _currentStepWidget(context, model),
-      ],
-    );
-  }
 
-  Widget _currentStepWidget(BuildContext context, IdentificationModel model) {
     final status = model.user?.status;
 
     switch (status) {
@@ -75,13 +68,12 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.lastNameKanji = text;
                     },
                     keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.person),
                       labelText: '姓（漢字）',
                       hintText: "田中",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.familyName],
                   ),
                   TextFormField(
                     initialValue: model.individual?.firstNameKanji,
@@ -89,13 +81,12 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.firstNameKanji = text;
                     },
                     keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.person),
                       labelText: '名（漢字）',
                       hintText: "太郎",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.givenName],
                   ),
                   const Divider(),
                   TextFormField(
@@ -104,7 +95,7 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.lastNameKana = text;
                     },
                     keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.person_outline),
                       labelText: '姓（カタカナ）',
                       hintText: "タナカ",
@@ -117,7 +108,7 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.firstNameKana = text;
                     },
                     keyboardType: TextInputType.name,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.person_outline),
                       labelText: '名（カタカナ）',
                       hintText: "タロウ",
@@ -136,7 +127,7 @@ class IdentificationPage extends StatelessWidget {
                     inputFormatters: [
                       MaskedInputFormatter('####/##/##'),
                     ],
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.calendar_today),
                       labelText: '生年月日',
                       hintText: "1991/07/15",
@@ -146,7 +137,7 @@ class IdentificationPage extends StatelessWidget {
                   const Divider(),
                   DropdownButtonFormField<Gender>(
                     value: individual?.gender,
-                    items: [
+                    items: const [
                       DropdownMenuItem(
                         value: Gender.none,
                         child: Text(
@@ -169,21 +160,21 @@ class IdentificationPage extends StatelessWidget {
                     onChanged: (value) {
                       model.individual?.gender = value ?? Gender.none;
                     },
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.people_alt),
                       labelText: '性別',
                       hintText: "選択してください",
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  Divider(),
+                  const Divider(),
                   TextFormField(
                     initialValue: model.individual?.phoneNumber,
                     onChanged: (text) {
                       model.individual?.phoneNumber = text;
                     },
                     keyboardType: TextInputType.phone,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.phone),
                       labelText: '電話番号',
                       hintText: "000-0000-0000",
@@ -201,13 +192,12 @@ class IdentificationPage extends StatelessWidget {
                     inputFormatters: [
                       MaskedInputFormatter('###-####'),
                     ],
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map),
                       labelText: '郵便番号',
                       hintText: "150-0001",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.postalCode],
                   ),
                   const Divider(),
                   TextFormField(
@@ -216,13 +206,12 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKanji?.state = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map),
                       labelText: '都道府県',
                       hintText: "東京都",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.streetAddressLevel1],
                   ),
                   TextFormField(
                     initialValue: model.individual?.addressKanji?.city,
@@ -230,13 +219,12 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKanji?.city = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map),
                       labelText: '市区町村',
                       hintText: "渋谷区",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.streetAddressLevel2],
                   ),
                   TextFormField(
                     initialValue: model.individual?.addressKanji?.town,
@@ -244,13 +232,12 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKanji?.town = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map),
                       labelText: '丁目まで',
                       hintText: "神宮前６丁目",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.streetAddressLine1],
                   ),
                   TextFormField(
                     initialValue: model.individual?.addressKanji?.line1,
@@ -258,13 +245,12 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKanji?.line1 = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map),
                       labelText: '番地、号',
                       hintText: "20-10",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.streetAddressLine2],
                   ),
                   TextFormField(
                     initialValue: model.individual?.addressKanji?.line2,
@@ -272,13 +258,12 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKanji?.line2 = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map),
                       labelText: '建物・部屋番号',
                       hintText: "KBOYビル102",
                       border: OutlineInputBorder(),
                     ),
-                    autofillHints: [AutofillHints.streetAddressLine3],
                   ),
                   const Divider(),
                   TextFormField(
@@ -287,7 +272,7 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKana?.state = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map_outlined),
                       labelText: '都道府県（カタカナ）',
                       hintText: "トウキョウト",
@@ -300,7 +285,7 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKana?.city = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map_outlined),
                       labelText: '市区町村（カタカナ）',
                       hintText: "シブヤク",
@@ -313,7 +298,7 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKana?.town = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map_outlined),
                       labelText: '丁目まで（カタカナ）',
                       hintText: "ジングウマエ６チョウメ",
@@ -326,7 +311,7 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKana?.line1 = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map_outlined),
                       labelText: '番地、号（カタカナ）',
                       hintText: "20-10",
@@ -339,81 +324,78 @@ class IdentificationPage extends StatelessWidget {
                       model.individual?.addressKana?.line2 = text;
                     },
                     keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       prefixIcon: Icon(Icons.map_outlined),
                       labelText: '建物・部屋番号（カタカナ）',
                       hintText: "KBOYビル102",
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        child: Text(
+                        child: const Text(
                           '写真付き身分証明書 - 表',
                         ),
                         onPressed: () {
                           model.showIdentificationImageFrontPicker();
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       model.identificationImageFront != null
-                          ? Icon(Icons.check_circle)
+                          ? const Icon(Icons.check_circle)
                           : Container(
                               width: 48,
                               height: 32,
                               color: Colors.black12,
-                              child: Icon(
+                              child: const Icon(
                                 Icons.person,
                                 color: Colors.grey,
                               ),
                             )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton(
-                        child: Text(
+                        child: const Text(
                           '写真付き身分証明書 - 裏',
                         ),
                         onPressed: () {
                           model.showIdentificationImageBackPicker();
                         },
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 8,
                       ),
                       model.identificationImageBack != null
-                          ? Icon(Icons.check_circle)
+                          ? const Icon(Icons.check_circle)
                           : Container(
                               width: 48,
                               height: 32,
                               color: Colors.black12,
-                              child: Icon(
+                              child: const Icon(
                                 Icons.person_outline,
                                 color: Colors.grey,
                               ),
                             )
                     ],
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   InkWell(
-                    child: Text(
+                    child: const Text(
                       '身分証明書の画像についての注意事項',
                       style: TextStyle(
                         color: Colors.blue,
@@ -425,7 +407,7 @@ class IdentificationPage extends StatelessWidget {
                       showTextDialog(context, model.imageNoteText);
                     },
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 16,
                   ),
                   Row(
@@ -443,13 +425,13 @@ class IdentificationPage extends StatelessWidget {
                             EdgeInsets.zero,
                           ),
                         ),
-                        child: Text('利用規約'),
+                        child: const Text('利用規約'),
                         onPressed: () {
                           // 利用規約の表示
                           showTextDialog(context, model.termText);
                         },
                       ),
-                      SelectableText(
+                      const Text(
                         'へ同意する',
                       ),
                     ],
@@ -459,14 +441,14 @@ class IdentificationPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 16,
         ),
         Center(
           child: SizedBox(
             height: 44,
             child: ElevatedButton(
-              child: Text('アップロード'),
+              child: const Text('アップロード'),
               onPressed: model.isAcceptTerm
                   ? () async {
                       try {
@@ -482,7 +464,7 @@ class IdentificationPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 64,
         ),
       ],
@@ -533,7 +515,7 @@ class IdentificationPage extends StatelessWidget {
                   Text(
                     individual?.lastNameKana ?? '',
                   ),
-                  SizedBox(width: 4),
+                  const SizedBox(width: 4),
                   Text(
                     individual?.firstNameKana ?? '',
                   ),

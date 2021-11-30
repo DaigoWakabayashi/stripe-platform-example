@@ -72,10 +72,6 @@ class Dob {
     year = json['year'];
   }
 
-  String toString() {
-    return '$year/$month/$day';
-  }
-
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['day'] = day;

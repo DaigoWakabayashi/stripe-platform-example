@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
@@ -58,7 +59,7 @@ class IdentificationModel extends ChangeNotifier {
       final json = await _stripeRepo.retrieveConnectAccount(user);
       individual = StripeIndividual.fromJson(json);
     } catch (e) {
-      print(e);
+      log(e.toString());
       // 新しいの入れる
       individual = StripeIndividual();
     } finally {
@@ -77,7 +78,7 @@ class IdentificationModel extends ChangeNotifier {
         tosAcceptance,
       );
     } catch (e) {
-      print(e);
+      log(e.toString());
     } finally {
       endLoading();
     }
@@ -134,7 +135,7 @@ class IdentificationModel extends ChangeNotifier {
         tosAcceptance,
       );
     } catch (e) {
-      print(e);
+      log(e.toString());
     } finally {
       endLoading();
     }
@@ -152,13 +153,12 @@ class IdentificationModel extends ChangeNotifier {
       final url = Uri.parse('https://api.ipify.org');
       var response = await http.get(url);
       if (response.statusCode == 200) {
-        print(response.body);
         return response.body;
       } else {
         return '';
       }
     } catch (e) {
-      print(e);
+      log(e.toString());
       return '';
     }
   }
