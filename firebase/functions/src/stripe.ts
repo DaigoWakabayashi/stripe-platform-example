@@ -89,7 +89,7 @@ export const createStripeCharge = functions.region("asia-northeast1").https.onCa
 // MARK: - ConnectAccountを作成し、accountIdを返す
 export const createConnectAccount = functions.region("asia-northeast1").https.onCall(async (data, context) => {
     return await stripe.accounts.create({
-        type: 'custom',
+        type: 'custom', // 必須
         country: 'JP',
         email: data.email,
         business_type: 'individual',
@@ -99,8 +99,8 @@ export const createConnectAccount = functions.region("asia-northeast1").https.on
                 product_description: 'プラットフォーム型サービスのテストアカウントです', // 事業の内容
             },
         capabilities: {
-            card_payments: { requested: true },
-            transfers: { requested: true },
+            card_payments: { requested: true }, // カード決済
+            transfers: { requested: true }, // 送金
         },
         individual: {
             email: data.email,
@@ -122,8 +122,8 @@ export const updateConnectAccount = functions.region("asia-northeast1").https.on
     const result = await stripe.accounts.update(
         data.accountId,
         {
-            individual: data.individual,
-            tos_acceptance: data.tos_acceptance,
+            individual: data.individual, // 本人確認情報
+            tos_acceptance: data.tos_acceptance, // 利用規約への同意
         },
         { idempotencyKey: data.idempotencyKey }
     );
