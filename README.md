@@ -14,6 +14,7 @@ Flutter × Firebase × StripeConnectAPI を用いたプラットフォーム型�
 - 決済
 
 
-## 解説記事
+## 解説記事・スライド資料
 
 - [【FlutterFire × StripeAPI】簡易版メルカリのようなCtoCプラットフォームアプリを作ってみた](https://qiita.com/DaigoWakabayashi/items/891f88dec29f9c44ca03)
+- [StripeConnectAPIを使ってプラットフォームサービスを作ろう](https://docs.google.com/presentation/d/1CEn2JO9VgGfkYyFZMBJWczgwLZ1et5_cCWU9ox0IcXc/edit?usp=sharing)
